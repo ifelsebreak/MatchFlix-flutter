@@ -11,7 +11,7 @@
 
 Proof of concept for a Tinder-like app to find movies that both you and your partner want to watch (or friend, or family member or whatever).
 
-Movies appear as cards in a deck and you swipe them right or left to like or dislike and also to shout your preference (sends a push notification to the other user) or down to save the movie for later without the other user knowing.
+Movies appear as cards in a deck and you swipe them right or left to like or dislike and also up to shout your preference (sends a push notification to the other user) or down to save the movie for later without the other user knowing.
 
 When you both swipe right on the same movie you have a match and get notified and you can stream the movie or schedule a movie night.
 
