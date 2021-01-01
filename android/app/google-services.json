@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "793598329014",
+    "firebase_url": "https://matchflix-9003b.firebaseio.com",
+    "project_id": "matchflix-9003b",
+    "storage_bucket": "matchflix-9003b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793598329014:android:2c123f1db2023e76f6a617",
+        "android_client_info": {
+          "package_name": "com.matchflix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "793598329014-7v9ksiol5qhguq48mmb2414vv8516s6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.matchflix",
+            "certificate_hash": "5d08c3eca5a335c9fff9352d70c59288401a45b8"
+          }
+        },
+        {
+          "client_id": "793598329014-5bg16roo7uq7n89s0al7p3vovq1r8os4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxL6VTc6mJhmbBiTn3rGSL499WRgs48vU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793598329014-5bg16roo7uq7n89s0al7p3vovq1r8os4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-6758845982121691~8979886376"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793598329014:android:50229b26bffbb3e4f6a617",
+        "android_client_info": {
+          "package_name": "com.tmdb_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "793598329014-5bg16roo7uq7n89s0al7p3vovq1r8os4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxL6VTc6mJhmbBiTn3rGSL499WRgs48vU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793598329014-5bg16roo7uq7n89s0al7p3vovq1r8os4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793598329014:android:8e1a9bbc9254a512f6a617",
+        "android_client_info": {
+          "package_name": "com.tmdb_test_stacked"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "793598329014-5bg16roo7uq7n89s0al7p3vovq1r8os4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxL6VTc6mJhmbBiTn3rGSL499WRgs48vU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793598329014-5bg16roo7uq7n89s0al7p3vovq1r8os4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
