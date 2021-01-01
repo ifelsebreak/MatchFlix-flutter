@@ -7,7 +7,7 @@
 
 # Overview
 
-![Overview](https://github.com/yuyakaido/images/blob/master/CardStackView/sample-overview.gif)
+![Overview](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/20210101_200410.gif)
 
 Proof of concept for a Tinder-like app to find movies that both you and your partner want to watch (or friend, or family member or whatever).
 
