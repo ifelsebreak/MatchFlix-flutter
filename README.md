@@ -15,7 +15,9 @@ Movies appear as cards in a deck and you swipe them right or left to like or dis
 
 When you both swipe right on the same movie you have a match and get notified and you can stream the movie or schedule a movie night.
 
-You can also undo your swipe and call back a swiped card from off screen.
+You can also undo your swipe and call back a swiped card from off screen by tapping the 🔄 button.
+
+If you tap on a movie it takes you to a screen with more details about the movie itself (score, genres, plot, etc).
 
 Made with Flutter and Dart, uses themoviedb.org API for movie data.
 
@@ -27,7 +29,3 @@ Made with Flutter and Dart, uses themoviedb.org API for movie data.
 - The app takes the data from the themoviedb.org API: you must sign up on their website get an API key and set it as the value of the "tmdbAPIkey" variable in /lib/movie-list.dart.
 - It's my first mobile app ever, so expect messy code and bad prarctices.
 - Tested on android emulator and Samsung Galaxy A50.
-
-## DEMO APK
-
-A demo apk file can be found here.
