@@ -3,20 +3,31 @@
 ![License](https://img.shields.io/github/license/ifelsebreak/MatchFlix)
 ![Language](https://img.shields.io/badge/language-Dart-blue)
 ![Toolkit](https://img.shields.io/badge/toolkit-Flutter-brightgreen)
+![API](https://img.shields.io/badge/API-themoviedb.org-red)
 
 # Overview
 
 ![Overview](https://github.com/yuyakaido/images/blob/master/CardStackView/sample-overview.gif)
 
-Proof of concept for a Tinder-like app to find movies that both you and your partner (or friend, or family member or whatever)  want to watch. Movies appear as cards in a deck and you swipe them right or left to like or dislike (and also up or down to shout your preference or save the movie without the other user knowing); When you both swipe right on the same movie you have a match and you can stream it via Netflix or Prime Video or other platforms.
+Proof of concept for a Tinder-like app to find movies that both you and your partner want to watch (or friend, or family member or whatever).
 
-Made with Flutter and Dart, uses themoviedb.org API for mve data.
+Movies appear as cards in a deck and you swipe them right or left to like or dislike and also to shout your preference (sends a push notification to the other user) or down to save the movie for later without the other user knowing.
+
+When you both swipe right on the same movie you have a match and get notified and you can stream the movie or schedule a movie night.
+
+You can also undo your swipe and call back a swiped card from off screen.
+
+Made with Flutter and Dart, uses themoviedb.org API for movie data.
 
 
 ## DISCLAIMER
 
 - Backend not yet implemented (doesn't register likes and dislikes and the match mechanism is just a mock-up animation).
 - Deck is currently generated with batches of 5 cards, to be replaced with a better solution.
-- The app takes the data from the themoviedb.org API: you must sign up on their website and provide your own API key (it's free).
-- It's my first mobile app ever so expect messy code and bad prarctices.
-- Tested on emulator and Samsung Galaxy A50
+- The app takes the data from the themoviedb.org API: you must sign up on their website get an API key and set it as the value of the "tmdbAPIkey" variable in /lib/movie-list.dart.
+- It's my first mobile app ever, so expect messy code and bad prarctices.
+- Tested on android emulator and Samsung Galaxy A50.
+
+## DEMO APK
+
+A demo apk file can be found here.
