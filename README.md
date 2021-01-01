@@ -19,7 +19,7 @@ You can also undo your swipe and call back a swiped card from off screen by tapp
 
 If you tap on a movie it takes you to a screen with more details about the movie itself (score, genres, plot, etc).
 
-Made with Flutter and Dart, uses themoviedb.org API for movie data.
+Made with Flutter and Dart, uses [themoviedb.org](http://themoviedb.org) API for movie data.
 
 
 ## DISCLAIMER
