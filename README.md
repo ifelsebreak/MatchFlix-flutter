@@ -1,6 +1,7 @@
 # MatchFlix
 ![Platform](http://img.shields.io/badge/platform-android-blue.svg?style=flat)
 ![Platform](https://img.shields.io/github/license/ifelsebreak/MatchFlix)
+
 Proof of concept for a Tinder-like app to find movies that both you and your partner (or friend, or family member or whatever)  want to watch. Movies appear as cards in a deck and you swipe them left or right: when you both swipe right on the same movie you have a match and you can stream it via Netflix or Prime Video or other platforms.
 
 Made with Flutter and Dart, uses themoviedb.org API for mve data.
