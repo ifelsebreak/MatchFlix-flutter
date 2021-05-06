@@ -9,6 +9,7 @@
 ## Overview
 
 ![Overview](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/20210101_200410.gif)
+![Log-in](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/Composizione_4.gif)
 
 Proof of concept for a Tinder-like app to find movies that both you and your partner want to watch (or friend, or family member or whatever).
 
