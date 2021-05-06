@@ -4,8 +4,9 @@
 ![Language](https://img.shields.io/badge/language-Dart-blue)
 ![Toolkit](https://img.shields.io/badge/toolkit-Flutter-brightgreen)
 ![API](https://img.shields.io/badge/API-themoviedb.org-red)
+![Backend](https://img.shields.io/badge/Backend-FireBase-yellow)
 
-# Overview
+## Overview
 
 ![Overview](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/20210101_200410.gif)
 
@@ -21,11 +22,17 @@ If you tap on a movie it takes you to a screen with more details about the movie
 
 Made with Flutter and Dart, uses [themoviedb.org](http://themoviedb.org) API for movie data.
 
+## Changelog
+
+- You can log-in using your [themoviedb.org](http://themoviedb.org) account.
+- When you swipe right to like a movie it also gets saved as favorite in your [themoviedb.org](http://themoviedb.org) account.
+- You can send group requests to other [themoviedb.org](http://themoviedb.org) users as well as accept or decline them.
+- Messed up the screen with details about the specific movie you tap on; will fix in next commit.
 
 ## DISCLAIMER
 
-- Backend not yet implemented (doesn't register likes and dislikes and the match mechanism is just a mock-up animation).
+- Backend implementation still underway ("match" feature is just a mock-up animation for now).
 - Deck is currently generated with batches of 5 cards, to be replaced with a better solution.
-- The app takes the data from the themoviedb.org API: you must sign up on their website get an API key and set it as the value of the "tmdbAPIkey" variable in /lib/movie-list.dart.
-- It's my first mobile app ever, so expect messy code and bad prarctices.
+- The app takes the data from the themoviedb.org API: you must sign up on their website and get your own API key and set it as the value of the "tmdbAPIkey" variable in /lib/movie-list.dart.
+- You need to set up your FireBase accont and link it to your flutter project through the google-services.json file provided by Google.
 - Tested on android emulator and Samsung Galaxy A50.
