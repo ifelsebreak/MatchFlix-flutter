@@ -25,6 +25,9 @@ import 'cards/fading_tags_04.dart';
 
 import 'groups_list.dart';
 import 'movie_detail.dart';
+import 'auth.dart';
+import 'groups_list_add.dart';
+
 //import 'config.dart';
 
 
@@ -32,17 +35,53 @@ import 'movie_detail.dart';
 double width;
 double height;
 
+
+var unloadedmovies = [
+  {"adult":false,"backdrop_path":"/srYya1ZlI97Au4jUYAktDe3avyA.jpg","genre_ids":[14,28,12],"id":464052,"original_language":"en","original_title":"Wonder Woman 1984","overview":"Loading...","popularity":2635.962,"poster_path":"/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg","release_date":"2020-12-16","title":"Loading...","video":false,"vote_average":7,"vote_count":3339},
+  {"adult":false,"backdrop_path":"/srYya1ZlI97Au4jUYAktDe3avyA.jpg","genre_ids":[14,28,12],"id":464052,"original_language":"en","original_title":"Wonder Woman 1984","overview":"Loading...","popularity":2635.962,"poster_path":"/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg","release_date":"2020-12-16","title":"Loading...","video":false,"vote_average":7,"vote_count":3339},
+  {"adult":false,"backdrop_path":"/srYya1ZlI97Au4jUYAktDe3avyA.jpg","genre_ids":[14,28,12],"id":464052,"original_language":"en","original_title":"Wonder Woman 1984","overview":"Wonder Woman comes into conflict with the Soviet Union during the Cold War in the 1980s and finds a formidable foe by the name of the Cheetah.","popularity":2635.962,"poster_path":"/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg","release_date":"2020-12-16","title":"Wonder Woman 1984","video":false,"vote_average":7,"vote_count":3339},
+  {"adult":false,"backdrop_path":"/srYya1ZlI97Au4jUYAktDe3avyA.jpg","genre_ids":[14,28,12],"id":464052,"original_language":"en","original_title":"Wonder Woman 1984","overview":"Wonder Woman comes into conflict with the Soviet Union during the Cold War in the 1980s and finds a formidable foe by the name of the Cheetah.","popularity":2635.962,"poster_path":"/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg","release_date":"2020-12-16","title":"Wonder Woman 1984","video":false,"vote_average":7,"vote_count":3339},
+  {"adult":false,"backdrop_path":"/srYya1ZlI97Au4jUYAktDe3avyA.jpg","genre_ids":[14,28,12],"id":464052,"original_language":"en","original_title":"Wonder Woman 1984","overview":"Wonder Woman comes into conflict with the Soviet Union during the Cold War in the 1980s and finds a formidable foe by the name of the Cheetah.","popularity":2635.962,"poster_path":"/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg","release_date":"2020-12-16","title":"Wonder Woman 1984","video":false,"vote_average":7,"vote_count":3339},
+  {"adult":false,"backdrop_path":"/srYya1ZlI97Au4jUYAktDe3avyA.jpg","genre_ids":[14,28,12],"id":464052,"original_language":"en","original_title":"Wonder Woman 1984","overview":"Wonder Woman comes into conflict with the Soviet Union during the Cold War in the 1980s and finds a formidable foe by the name of the Cheetah.","popularity":2635.962,"poster_path":"/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg","release_date":"2020-12-16","title":"Wonder Woman 1984","video":false,"vote_average":7,"vote_count":3339},
+];
+
 var currentDraggable = 1;
+var current_cover;
+var current_id;
+var current_tagline;
+var current_video;
+var current_title;
+var specificMovieData;
+var currentMovie;
+var videoData;
+
 
 var undoSwipe = false;
 var undoCount = 0;
 
 var indice = 0;
+
+
 var resultsPage = 1;
 
-var tmdbAPIkey = 'You API key goes here';
-
 var image_url = 'https://image.tmdb.org/t/p/w500/';
+var tmdbAPIkey = 'PUT YOUR API KEY HERE';
+
+var markFavorite_url = 'https://api.themoviedb.org/3/account/'+ '${userID}' +'/favorite?api_key=' + tmdbAPIkey + '&session_id=' + sessionID;
+var addToWatchList_url = 'https://api.themoviedb.org/3/account/' + '${userID}' + '/watchlist?api_key=' + tmdbAPIkey + '&session_id=' + sessionID;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 valueLimit(val, min, max) {
   return val < min ? min : (val > max ? max : val);
@@ -55,7 +94,52 @@ reverseOpacity(value, min, max) {
 
 
 
+
+
+
+
+Future<http.Response> markFavorite() {
+  return http.post(
+    markFavorite_url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode({
+      "media_type": "movie",
+      "media_id": current_id,
+      "favorite": true
+    }),
+  );
+}
+
+
+Future<http.Response> addToWatchList() {
+  return http.post(
+    addToWatchList_url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode({
+      "media_type": "movie",
+      "media_id": current_id,
+      "watchlist": true
+    }),
+  );
+}
+
+
+
+
+
+
+
 class MovieList extends StatefulWidget {
+  final sessionID;
+  final userID;
+  final username;
+  final avatar_path;
+  MovieList({Key key, @required this.sessionID, this.userID, this.username, this.avatar_path}) : super(key: key);
+
   @override
   MovieListState createState() {
     return new MovieListState();
@@ -76,7 +160,7 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
 
 
 
-// RICHIAMA FILE JSON
+// CALL JSON FILE
   Future<Map> getJson() async {
     //var apiKey = getApiKey();
     var url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + tmdbAPIkey + '&language=en-US&sort_by=popularity.desc&include_adult=false&page='+ '${resultsPage}';
@@ -85,33 +169,42 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
   }
 
 
-//OTTIENI I DATI DAL FILE JSON
+//GET DATA FROM JSON FILE
   void getData() async {
     var data = await getJson();
 
+
     setState(() {
-      if (movies?.length == null) {
-        movies = data['results'];
-      }
+
+        if (movies?.length == null) {
+          movies = data['results'];
+        }
+
     });
 
   }
 
-  //CREA LISTA DI ELEMENTI CON I DATI OTTENUTI DA JSON
+  //WITH DATA OBTAINED FROM JSON, CREATE LIST
   Future<List> listaFilm() async {
-    new ListView.builder(
-        itemCount: movies == null ? 0 : movies.length,
-        itemExtent: 10,
-        cacheExtent: 10,
+    if (movies != null) {
+      new ListView.builder(
+          itemCount: movies == null ? 0 : movies.length,
+          itemExtent: 10,
+          cacheExtent: 10,
 
-        itemBuilder: (context, i) {
-          return  MovieCell(movies, i);
-        }
-    );
+          itemBuilder: (context, i) {
+            if (movies != null) {
+              return MovieCell(movies, i);
+            }
+          }
+      );
+    } else {
+      return List();
+    }
   }
 
 
-//CHIAMA LA PAGINA SEGUENTE DEL FILE JSON
+//CALL NEXT PAGE OF JSON FILE
   Future<Map> getNextJson() async {
     //var apiKey = getApiKey();
     var url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + tmdbAPIkey + '&language=en-US&sort_by=popularity.desc&include_adult=false&page='+ '${resultsPage}';
@@ -120,7 +213,7 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
   }
 
 
-//OTTIENI I DATI DALLA NUOVA PAGINA JSON
+//GET DATA FROM NEW PAGE OF JSON FILE
   void getNextData() async {
 
 
@@ -151,22 +244,44 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
     width = screenSize.width;
     height = screenSize.height;
 
-    print(indice);
+
+    getData(); 
+
+    if(movies != null) {
+
+
+
+    print('indice: $indice');
     print(movies?.length);
-    print(currentDraggable);
-    print(undoSwipe);
+    print('currentDraggable: $currentDraggable');
+    print('undoSwipe: ${undoSwipe}');
+    print(movies[currentDraggable-1]['id']);
+    print(current_id);
+    print(current_cover);
+    print(movies);
+    print('session ID: ' + sessionID);
+    print('username: ' + username);
+    print('userID ' + '${userID}');
+
+    current_id = movies[indice + currentDraggable -1]['id'];
+    current_cover = movies[indice + currentDraggable -1]['backdrop_path'];
+    current_title = movies[indice + currentDraggable -1]['title'];
+    //current_tagline = movies[currentDraggable-1]['tagline'];
+    //current_video = movies[currentDraggable-1]['tagline'];
+    };
+
 
   //if (movies.length == null) {
-    getData(); // se lo togli le card non sono più swipeabili
+
   //}
 
 
 
-
-   if (indice == movies?.length -10) {
-        getNextData();
-      }
-
+if (movies != null) {
+  if (indice == movies?.length - 10) {
+    getNextData();
+  }
+}
 
 
 
@@ -226,13 +341,21 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
                     icon: Icon(Icons.group),
                     color: Colors.grey,
                     onPressed: () {
+                      /*
                       Navigator.push(
                           context,
                           PageTransition(
                               type: PageTransitionType.fade,
-                              child: lista_gruppi(context)
+                              child: GroupsList()
                           )
                       );
+                      */
+                      Navigator.push(context, new MaterialPageRoute(
+                          builder: (context) {
+                            return new GroupsListAdd();
+                          }
+                      ));
+
                     }
                   )
           ),
@@ -266,7 +389,7 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
                                 //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                               ),
 
-                              ElevatedButton(  // ANNULLA
+                              ElevatedButton(  // UNDO
 
                                   onPressed: () {
                                     undoSwipe = true;
@@ -284,7 +407,7 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
                               ),
 
                               ElevatedButton( // SAVE
-                                  onPressed: () {null;},
+                                  onPressed: () {addToWatchList();},
                                   child: Icon(Icons.save_alt_outlined, size: 20, color: Colors.lightBlueAccent,),
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -308,7 +431,10 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
                               ),
 
                               ElevatedButton(  // LIKE
-                                  onPressed: () {null;},
+                                  onPressed: () {
+                                    //markFavorite();
+                                    //_DraggableCardState._runAnimationSwipeRight(Offset(0, 30), Size(0,30));
+                                    },
                                   child: Icon(Icons.thumb_up, size: 25, color: Colors.white,),
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all<Color>(Colors.greenAccent),
@@ -329,32 +455,36 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
               Container(
                 padding: EdgeInsets.only(top: screenSize.height *0.005),
                 alignment: Alignment.topCenter,
-                child: MovieCell(movies, indice +5)
+                child: movies != null ? MovieCell(movies, indice + 5) : Container()
               ),
 
               DraggableCard5(
 
-                  child: MovieCell(movies, indice +4)
+                  child: movies != null ? MovieCell(movies, indice + 4) : Container()
               ),
 
               DraggableCard4(
 
-                  child: MovieCell(movies, indice +3)
+                  child: movies != null ? MovieCell(movies, indice + 3) : Container()
               ),
 
               DraggableCard3(
 
-                  child: MovieCell(movies, indice +2)
+                  child: movies != null ? MovieCell(movies, indice + 2) : Container()
               ),
 
               DraggableCard2(
 
-                  child: MovieCell(movies, indice +1)
+                  child: movies != null ? MovieCell(movies, indice + 1) : Container()
               ),
 
               DraggableCard(
 
-                  child: MovieCell(movies, indice)
+                  child: movies != null ? MovieCell(movies, indice) : Container(
+                    alignment: Alignment.center,
+                    //padding: EdgeInsets.only(left: screenSize.width/2, top: screenSize.height/ 2),
+                      child: CircularProgressIndicator()
+                  )
               ),
             ]
     )
@@ -372,20 +502,77 @@ class MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin
 
 
 class MovieCell extends StatelessWidget {
+
+
   final movies;
   final i;
   Color mainColor = const Color(0xff3C3261);
 
+
+
   MovieCell(this.movies, this.i);
+
+
+
+
+
+
+
+  Future<Map> getSpecificJson() async {
+    //var apiKey = getApiKey();
+
+    var url = 'https://api.themoviedb.org/3/movie/'+ '${current_id}' + '?api_key=' + '${tmdbAPIkey}';
+    print(url);
+    var response = await http.get(url);
+    return json.decode(response.body);
+
+  }
+
+
+
+  getSpecificData() async {
+    var data = await getSpecificJson();
+
+
+    specificMovieData = await data;
+    print(specificMovieData);
+
+
+  }
+
+
+
+  Future<Map> getVideoJson() async {
+    //var apiKey = getApiKey();
+    var url = 'https://api.themoviedb.org/3/movie/' + '${current_id}' + '/videos?api_key=' + '${tmdbAPIkey}' + '&language=en-US';
+    print(url);
+    var response = await http.get(url);
+    return json.decode(response.body);
+
+  }
+
+
+
+  getVideoData() async {
+    var data = await getVideoJson();
+
+      videoData = data;
+      print(videoData);
+
+
+  }
+
+
+
+
+
+
+
 
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-
-
-
-
 
 
     return new Container(
@@ -416,7 +603,7 @@ class MovieCell extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            tileMode: TileMode.clamp,
+            tileMode: TileMode.mirror,
             colors: <Color>[
               Colors.black.withAlpha(0),
               Colors.black12.withAlpha(10),
@@ -451,9 +638,13 @@ class MovieCell extends StatelessWidget {
 
                   InkWell(
                     onTap: () {
+                      getSpecificData();
+                      getVideoData();
+                      print('specificMovieData: ${specificMovieData}');
+
                       Navigator.push(context, new MaterialPageRoute(
                           builder: (context) {
-                            return new MovieDetail(movies[i]);
+                            return new MovieDetail(specificMovie: specificMovieData, currentMovie: movies[indice + currentDraggable - 1], videos: videoData);
                           }
                       ));
                     },
@@ -559,9 +750,9 @@ void _matchModalBottomSheet(context){
                                             decoration: new BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 image: new DecorationImage(
-                                                  fit: BoxFit.fill,
+                                                  fit: BoxFit.cover,
                                                     image: CachedNetworkImageProvider(
-                                                        'https://image.tmdb.org/t/p/w500/6agKYU5IQFpuDyUYPu39w7UCRrJ.jpg'
+                                                        'https://image.tmdb.org/t/p/w500/' + current_cover
                                                     ),
                                                 )
                                             )
@@ -691,6 +882,17 @@ void _matchModalBottomSheet(context){
                     new Wrap(
 
                       children: <Widget>[
+                        new ListTile(
+                            //leading: new Icon(Icons.thumb_up),
+                            title: new Text(current_title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 30.0,
+                                  fontWeight: FontWeight.bold)
+                              ),
+                            onTap: () => {}
+                        ),
                         new ListTile(
                             leading: new Icon(Icons.live_tv),
                             title: new Text('Watch now or buy for later'),
@@ -1112,7 +1314,10 @@ class _DraggableCardState extends State<DraggableCard>
                 currentDraggable++;
                 undoCount = 0;
 
-                }
+                markFavorite();
+
+
+              }
 
               else if (_dragAlignment.y < -5 && _dragAlignment.x > -80 && _dragAlignment.x < 80) { // SWIPE IN ALTO
 
@@ -1131,7 +1336,7 @@ class _DraggableCardState extends State<DraggableCard>
                 currentDraggable++;
                 undoCount = 0;
 
-
+                addToWatchList();
               }
 
 
@@ -1158,7 +1363,7 @@ class _DraggableCardState extends State<DraggableCard>
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
-                                elevation: 6,
+                                elevation: 0,
 
                                 color: Colors.transparent,
                                 child: Stack(
@@ -1721,7 +1926,7 @@ class _DraggableCard2State extends State<DraggableCard2>
                 currentDraggable++;
                 undoCount = 0;
 
-
+                markFavorite();
 
               }
 
@@ -1740,7 +1945,7 @@ class _DraggableCard2State extends State<DraggableCard2>
                 currentDraggable++;
                 undoCount = 0;
 
-
+                addToWatchList();
               }
 
 
@@ -1763,7 +1968,7 @@ class _DraggableCard2State extends State<DraggableCard2>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          elevation: 6,
+                          elevation: 0,
 
                           color: Colors.transparent,
                           child: Stack(
@@ -2326,6 +2531,8 @@ class _DraggableCard3State extends State<DraggableCard3>
                 currentDraggable++;
                 undoCount = 0;
 
+                markFavorite();
+
               }
 
               else if (_dragAlignment.y < -5 && _dragAlignment.x > -80 && _dragAlignment.x < 80) { // SWIPE IN ALTO
@@ -2342,6 +2549,8 @@ class _DraggableCard3State extends State<DraggableCard3>
 
                 currentDraggable++;
                 undoCount = 0;
+
+                addToWatchList();
               }
 
 
@@ -2364,7 +2573,7 @@ class _DraggableCard3State extends State<DraggableCard3>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          elevation: 6,
+                          elevation: 0,
 
                           color: Colors.transparent,
                           child: Stack(
@@ -2937,6 +3146,7 @@ class _DraggableCard4State extends State<DraggableCard4>
                 currentDraggable++;
                 undoCount = 0;
 
+                markFavorite();
 
                 //if (FireBase.User01.likedList.contains(specificMovie['id']) == true ) {
                 _matchModalBottomSheet(context);
@@ -2963,6 +3173,8 @@ class _DraggableCard4State extends State<DraggableCard4>
                 currentDraggable++;
 
                 undoCount = 0;
+
+                addToWatchList();
               }
 
 
@@ -2985,7 +3197,7 @@ class _DraggableCard4State extends State<DraggableCard4>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          elevation: 6,
+                          elevation: 0,
 
                           color: Colors.transparent,
                           child: Stack(
@@ -3559,8 +3771,9 @@ class _DraggableCard5State extends State<DraggableCard5>
                 _runAnimationSwipeRight(details.velocity.pixelsPerSecond, size);
 
                 currentDraggable++;
-
                 undoCount = 0;
+
+                markFavorite();
 
               }
 
@@ -3579,6 +3792,7 @@ class _DraggableCard5State extends State<DraggableCard5>
 
                 currentDraggable++;
                 undoCount = 0;
+                addToWatchList();
 
               }
 
@@ -3602,7 +3816,7 @@ class _DraggableCard5State extends State<DraggableCard5>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          elevation: 6,
+                          elevation: 0,
 
                           color: Colors.transparent,
                           child: Stack(

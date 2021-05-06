@@ -17,6 +17,8 @@ public final class GeneratedPluginRegistrant {
     ShimPluginRegistry shimPluginRegistry = new ShimPluginRegistry(flutterEngine);
     flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.firestore.FlutterFirebaseFirestorePlugin());
     flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin());
+    flutterEngine.getPlugins().add(new com.pichillilorenzo.flutter_inappwebview.InAppWebViewFlutterPlugin());
+      io.github.ponnamkarthik.flutteryoutube.FlutterYoutubePlugin.registerWith(shimPluginRegistry.registrarFor("io.github.ponnamkarthik.flutteryoutube.FlutterYoutubePlugin"));
     flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
       com.plushundred.speechbubble.SpeechBubblePlugin.registerWith(shimPluginRegistry.registrarFor("com.plushundred.speechbubble.SpeechBubblePlugin"));
     flutterEngine.getPlugins().add(new com.tekartik.sqflite.SqflitePlugin());

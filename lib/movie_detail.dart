@@ -2,17 +2,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_youtube/flutter_youtube.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import 'movie_list.dart';
 
-var movie;
+var tmdbAPIkey = '197c3e3ad86e0b0c080d2373b01603e0';
+
 var specificMovie;
+var specificMovieID = specificMovie['id'];
 
 
 
+/*
+Future<Map> getSpecificJson() async {
+  //var apiKey = getApiKey();
+
+  var url = 'https://api.themoviedb.org/3/movie/'+ specificMovieID + '?api_key=' + tmdbAPIkey;
+  var response = await http.get(url);
+  return json.decode(response.body);
+
+}
+
+
+
+getSpecificData() async {
+  var data = await getSpecificJson();
+
+
+  specificMovieData = data;
+
+}
+
+*/
 
 class MovieItem extends StatefulWidget {
   @override
@@ -26,69 +52,8 @@ class MovieItem extends StatefulWidget {
 
 
 class MovieItemState extends State<MovieItem> {
-var specificMovie;
+
 var videoData;
-
-
-
-
-
-
-
-
-Future<Map> getSpecificJson() async {
-    //var apiKey = getApiKey();
-    var url = 'https://api.themoviedb.org/3/movie/'+ movie['id'] + '?api_key=' + tmdbAPIkey;
-    var response = await http.get(url);
-    return json.decode(response.body);
-
-  }
-
-
-
-  void getSpecificData() async {
-    var data = await getSpecificJson();
-
-    setState(() {
-      specificMovie = data;
-
-    });
-
-  }
-
-
-
-
-
-
-
-
-Future<Map> getVideoJson() async {
-  //var apiKey = getApiKey();
-  var url = 'https://api.themoviedb.org/3/movie/' + movie['id'] + '/videos?api_key=' + tmdbAPIkey + '&language=en-US';
-  var response = await http.get(url);
-  return json.decode(response.body);
-
-}
-
-
-
-void getVideoData() async {
-  var data = await getVideoJson();
-
-  setState(() {
-    videoData = data['results'];
-
-  });
-
-}
-
-
-
-
-
-
-
 
 
 
@@ -105,18 +70,97 @@ Widget build(BuildContext context) {
 }
 
 
-
-
-
-class MovieDetail extends StatelessWidget {
+class MovieDetail extends StatefulWidget {
+  @override
+  _MovieDetailState createState() => _MovieDetailState();
   final specificMovie;
+  final currentMovie;
+  final videos;
 
-  MovieDetail(this.specificMovie);
+  MovieDetail({Key key, @required this.specificMovie, @required this.currentMovie, @required this.videos}) : super(key: key);
 
+}
+
+
+
+class _MovieDetailState extends State<MovieDetail> {
+
+  //MovieDetail(this.specificMovie);
 
 
   var image_url = 'https://image.tmdb.org/t/p/w500/';
   var video_url = 'https://www.youtube.com/watch?v=';
+
+
+  YoutubePlayerController _controller;
+  TextEditingController _idController;
+  TextEditingController _seekToController;
+
+  PlayerState _playerState;
+  YoutubeMetaData _videoMetaData;
+  double _volume = 100;
+  bool _muted = false;
+  bool _isPlayerReady = false;
+
+
+  final List<String> _ids = [
+    'nPt8bK2gbaU',
+    'gQDByCdjUXw',
+    'iLnmTe5Q2Qw',
+    '_WoCV4c6XOE',
+    'KmzdUe0RSJo',
+    '6jZDSSZZxjQ',
+    'p2lYr3vM_1w',
+    '7QUtEmBT_-w',
+    '34_PXCzGw1M',
+  ];
+
+
+@override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videos['results'][0]['key'],
+      flags: const YoutubePlayerFlags(
+        mute: false,
+        autoPlay: false,
+        disableDragSeek: false,
+        loop: false,
+        isLive: false,
+        forceHD: false,
+        enableCaption: true,
+      ),
+    )..addListener(listener);
+    _idController = TextEditingController();
+    _seekToController = TextEditingController();
+    _videoMetaData = const YoutubeMetaData();
+    _playerState = PlayerState.unknown;
+  }
+
+  void listener() {
+    if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
+      setState(() {
+        _playerState = _controller.value.playerState;
+        _videoMetaData = _controller.metadata;
+      });
+    }
+  }
+
+  @override
+  void deactivate() {
+    // Pauses video while navigating to next page.
+    _controller.pause();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _idController.dispose();
+    _seekToController.dispose();
+    super.dispose();
+  }
+
 
 
 
@@ -125,9 +169,10 @@ class MovieDetail extends StatelessWidget {
 
 
 // CREA LE ETICHETTE DEI VARI GENERI IN BASE ALLA VOCE genre_id  DEL FILE JSON
+
   Widget genere_01(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(9648)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(9648)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -152,8 +197,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_02(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(80)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(80)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -174,8 +219,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_03(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(18)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(18)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -196,8 +241,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_04(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(28)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(28)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -218,8 +263,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_05(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(12)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(12)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -240,8 +285,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_06(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(16)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(16)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -262,8 +307,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_07(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(35)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(35)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -286,8 +331,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_08(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(99)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(99)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -308,8 +353,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_09(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(10751)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(10751)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -330,8 +375,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_10(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(14)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(14)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -352,8 +397,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_11(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(36)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(36)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -375,8 +420,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_12(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(27)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(27)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -398,8 +443,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_13(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(18402)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(18402)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -420,8 +465,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_14(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(10749)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(10749)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -442,8 +487,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_15(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(878)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(878)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -464,8 +509,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_16(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(10770)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(10770)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -486,8 +531,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_17(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(53)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(53)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -508,8 +553,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_18(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(10752
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(10752
       )) {
         return Chip(
 
@@ -531,8 +576,8 @@ class MovieDetail extends StatelessWidget {
 
 
   Widget genere_19(BuildContext context){
-    for (int i = 0; i < specificMovie.length; i++) {
-      if (specificMovie['genre_ids'].contains(37)) {
+    for (int i = 0; i < widget.specificMovie.length; i++) {
+      if (widget.currentMovie['genre_ids'].contains(37)) {
         return Chip(
 
           avatar: CircleAvatar(
@@ -553,82 +598,89 @@ class MovieDetail extends StatelessWidget {
 
 
 
-
+  void playYoutubeVideo() {
+    FlutterYoutube.playYoutubeVideoByUrl(
+      apiKey: "<API_KEY>",
+      videoUrl: "https://www.youtube.com/watch?v=wgTBLj7rMPM",
+        autoPlay: true,
+    );
+  }
 
 
   @override
   Widget build(BuildContext context) {
 
-    print(specificMovie);
-
+  /*getSpecificData();
+  print(specificMovieData);*/
 
 
     Size screenSize = MediaQuery.of(context).size;
-    return new Scaffold(
-      body: new Stack(fit: StackFit.expand, children: [
+    if (widget.specificMovie != null) {
+      return new Scaffold(
+        body: new Stack(fit: StackFit.expand, children: [
 
 
-        new SingleChildScrollView(
-          child: new Container(
-            margin: const EdgeInsets.all(0.0),
-            child: new Column(
-              children: <Widget>[
-                new Container(
-                  alignment: Alignment.centerLeft,
-                  child: new Container(
-                    width: screenSize.width,
-                    height: screenSize.height * 0.65,
+          new SingleChildScrollView(
+            child: new Container(
+              margin: const EdgeInsets.all(0.0),
+              child: new Column(
+                children: <Widget>[
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    child: new Container(
+                      width: screenSize.width,
+                      height: screenSize.height * 0.65,
+                    ),
+                    decoration: new BoxDecoration(
+                      borderRadius: new BorderRadius.circular(0.0),
+                      image: new DecorationImage(
+                          image: new NetworkImage(
+                              image_url + widget.currentMovie['poster_path']),
+                          fit: BoxFit.cover),
+                    ),
                   ),
-                  decoration: new BoxDecoration(
-                    borderRadius: new BorderRadius.circular(0.0),
-                    image: new DecorationImage(
-                        image: new NetworkImage(
-                            image_url + specificMovie['poster_path']),
-                        fit: BoxFit.cover),
-                  ),
-                ),
-                new Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 25,
-                    horizontal: 12,
-                  ),
-                  child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
+                  new Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 25,
+                      horizontal: 12,
+                    ),
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
 
-                      new Text(
-                        specificMovie['title'],
+                        new Text(
+                          widget.specificMovie['title'],
 
-                        style: new TextStyle(
-                            color: Colors.black38,
-                            fontSize: 24.0),
-                      ),
-                      new Row( children:[
-
-                        Icon(Icons.today_outlined, color: Colors.grey,),
-
-
-                        Text(
-                          specificMovie['release_date'],
                           style: new TextStyle(
                               color: Colors.black38,
-                              fontSize: 15.0),
+                              fontSize: 24.0),
                         ),
-                      ]
-                      ),
+                        new Row(children: [
 
-                      new Row( children:[
-                        Icon(Icons.rate_review, color: Colors.grey),
-                        Text(
-                          '${specificMovie['vote_average']}/10',
-                          style: new TextStyle(
-                              color: Colors.black38,
-                              fontSize: 15.0),
+                          Icon(Icons.today_outlined, color: Colors.grey,),
+
+
+                          Text(
+                            widget.specificMovie['release_date'],
+                            style: new TextStyle(
+                                color: Colors.black38,
+                                fontSize: 15.0),
+                          ),
+                        ]
                         ),
 
-                      ]
-                      ),
-                      new Wrap(
+                        new Row(children: [
+                          Icon(Icons.rate_review, color: Colors.grey),
+                          Text(
+                            '${widget.specificMovie['vote_average']}/10',
+                            style: new TextStyle(
+                                color: Colors.black38,
+                                fontSize: 15.0),
+                          ),
+
+                        ]
+                        ),
+                        new Wrap(
                           spacing: 7,
 
                           direction: Axis.horizontal,
@@ -646,22 +698,30 @@ class MovieDetail extends StatelessWidget {
                             genere_10(context),
                             genere_11(context),
                             genere_12(context),
+                            genere_13(context),
+                            genere_14(context),
+                            genere_15(context),
+                            genere_16(context),
+                            genere_17(context),
+                            genere_18(context),
+                            genere_19(context),
+
                           ]
                       ),
-                      Divider()
-                    ],
+                        Divider()
+                      ],
+                    ),
                   ),
-                ),
-                new Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Column(
-                        children:[
+                  new Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Column(
+                          children: [
                             Align(
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                     padding: EdgeInsets.only(bottom: 7),
                                     child: Text(
-                                        'Tagline'/*specificMovie['title']*/,
+                                        widget.specificMovie['tagline'],
                                         textAlign: TextAlign.left,
                                         style: new TextStyle(
                                           color: Colors.black38,
@@ -671,73 +731,153 @@ class MovieDetail extends StatelessWidget {
                                 )
                             ),
                             Text(
-                              specificMovie['overview'],
-                              textAlign: TextAlign.justify,
-                              style: new TextStyle(
-                                color: Colors.black38,
-                                fontSize: 17,
-                              )
-                          )
-                    ]
-                )
-                ),
-                new Padding(padding: const EdgeInsets.all(10.0)),
-                Divider(),
-                Padding(
-                    padding: EdgeInsets.only(top: 10, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        new ElevatedButton(
-
-                            onPressed: null,
-                            child: Text(
-                              'Watch Now',
-                              style: TextStyle(fontSize: 20, color: Colors.deepOrangeAccent),
+                                widget.specificMovie['overview'],
+                                textAlign: TextAlign.justify,
+                                style: new TextStyle(
+                                  color: Colors.black38,
+                                  fontSize: 17,
+                                )
                             ),
-                            style: ButtonStyle(
 
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(17.0),),
-                              shape: MaterialStateProperty.all<StadiumBorder>(StadiumBorder()),
-                              elevation: MaterialStateProperty.all<double>(9),
-                            )
-                          //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        ),
+                            Container(
+                                padding: EdgeInsets.only(top: 10),
+                                child: ElevatedButton(
 
-                        ElevatedButton(
-                            onPressed: null,
-                            child: Icon(Icons.save_alt, size: 30, color: Colors.lightBlueAccent,),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(15.0),),
-                              shape: MaterialStateProperty.all<CircleBorder>(CircleBorder()),
-                              elevation: MaterialStateProperty.all<double>(9),
-                            )
-                          //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        ),
+                                    onPressed: null,
+                                    child: Text(
+                                      'Official Website',
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.black38),
+                                    ),
+                                    style: ButtonStyle(
 
-                        ElevatedButton(
-                            onPressed: null,
-                            child: Icon(Icons.share, size: 30, color: Colors.grey,),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(15.0),),
-                              shape: MaterialStateProperty.all<CircleBorder>(CircleBorder()),
-                              elevation: MaterialStateProperty.all<double>(9),
-                            )
-                          //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        ),
+                                      backgroundColor: MaterialStateProperty
+                                          .all<Color>(Colors.white),
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        EdgeInsets.all(10.0),),
+                                      shape: MaterialStateProperty.all<
+                                          StadiumBorder>(StadiumBorder()),
+                                      elevation: MaterialStateProperty.all<
+                                          double>(1),
+                                    )
+                                  //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                )
+                            ),
 
-                      ],
-                    )
-                )
-              ],
+
+                          ]
+                      )
+                  ),
+
+
+
+                  /*new Container(
+                    width: screenSize.width,
+                    height: screenSize.width * 0.5625,
+                    //padding: const EdgeInsets.all(10.0),
+                    child: new RaisedButton(
+                        child: new Text("Play Default Video"),
+                        onPressed: playYoutubeVideo),
+                  ),*/
+
+
+
+                  new YoutubePlayer(
+                    controller: _controller,
+                    showVideoProgressIndicator: true,
+                    //videoProgressIndicatorColor: Colors.amber,
+                    /*progressColors: ProgressColors(
+                      playedColor: Colors.amber,
+                      handleColor: Colors.amberAccent,
+                    ),*/
+                 /*   onReady () {
+                  _controller.addListener(listener);
+                  },*/
+                  ),
+
+
+
+                  new Padding(padding: const EdgeInsets.all(10.0)),
+                  Divider(),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new ElevatedButton(
+
+                              onPressed: null,
+                              child: Text(
+                                'Watch Now',
+                                style: TextStyle(fontSize: 20,
+                                    color: Colors.deepOrangeAccent),
+                              ),
+                              style: ButtonStyle(
+
+                                backgroundColor: MaterialStateProperty.all<
+                                    Color>(Colors.white),
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(EdgeInsets.all(17.0),),
+                                shape: MaterialStateProperty.all<StadiumBorder>(
+                                    StadiumBorder()),
+                                elevation: MaterialStateProperty.all<double>(9),
+                              )
+                            //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+
+                          ElevatedButton(
+                              onPressed: null,
+                              child: Icon(Icons.save_alt, size: 30,
+                                color: Colors.lightBlueAccent,),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<
+                                    Color>(Colors.white),
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(EdgeInsets.all(15.0),),
+                                shape: MaterialStateProperty.all<CircleBorder>(
+                                    CircleBorder()),
+                                elevation: MaterialStateProperty.all<double>(9),
+                              )
+                            //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+
+                          ElevatedButton(
+                              onPressed: null,
+                              child: Icon(
+                                Icons.share, size: 30, color: Colors.grey,),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<
+                                    Color>(Colors.white),
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(EdgeInsets.all(15.0),),
+                                shape: MaterialStateProperty.all<CircleBorder>(
+                                    CircleBorder()),
+                                elevation: MaterialStateProperty.all<double>(9),
+                              )
+                            //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+
+                        ],
+                      )
+                  )
+                ],
+              ),
             ),
-          ),
-        )
-      ]),
-    );
+          )
+        ]),
+      );
+    }
+    else {
+      return new Scaffold(
+            body: Container(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator()
+      )
+      );
+    }
+
+
   }
 
 }
