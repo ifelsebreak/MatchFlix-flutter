@@ -28,9 +28,9 @@ Made with Flutter and Dart, uses [themoviedb.org](http://themoviedb.org) API for
 ![Log-in](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/Composizione_4.gif)
 
 
-## Add friends to group:
+## Add friends to new group:
 
-![Group invite](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/MatchFlix_03.gif)
+![Group invite](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/MatchFlix_4.gif)
 
 
 ## Changelog
