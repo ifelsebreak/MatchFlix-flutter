@@ -7,7 +7,7 @@
 ![Backend](https://img.shields.io/badge/Backend-FireBase-yellow)
 
 ## DEPRECATED
-### This project is being rewritten from scratch with proper OOP, sound Null-safety and state management with BLOC-patter.
+### This project is being rewritten from scratch with proper OOP, sound Null-safety and state management with BLOC pattern.
 
 ## Overview
 
