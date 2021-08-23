@@ -6,6 +6,9 @@
 ![API](https://img.shields.io/badge/API-themoviedb.org-red)
 ![Backend](https://img.shields.io/badge/Backend-FireBase-yellow)
 
+## DEPRECATED
+### This project is being rewritten from scratch with proper OOP, sound Null-safety and state management with BLOC-patter.
+
 ## Overview
 
 ![Overview](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/20210101_200410.gif)
