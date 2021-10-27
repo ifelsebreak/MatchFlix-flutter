@@ -11,7 +11,7 @@
 
 ## Overview
 
-![Overview](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/20210101_200410.gif)
+![Overview](https://github.com/ifelsebreak/MatchFlix-flutter/blob/main/lib/images/20210101_200410.gif)
 
 Proof of concept for a Tinder-like app to find movies that both you and your partner want to watch (or friend, or family member or whatever).
 
@@ -28,12 +28,12 @@ Made with Flutter and Dart, uses [themoviedb.org](http://themoviedb.org) API for
 
 ## Log-in:
 
-![Log-in](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/Composizione_4.gif)
+![Log-in](https://github.com/ifelsebreak/MatchFlix-flutter/blob/main/lib/images/Composizione_4.gif)
 
 
 ## Add friends to new group:
 
-![Group invite](https://github.com/ifelsebreak/MatchFlix/blob/main/lib/images/MatchFlix_4.gif)
+![Group invite](https://github.com/ifelsebreak/MatchFlix-fluter/blob/main/lib/images/MatchFlix_4.gif)
 
 
 ## Changelog
