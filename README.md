@@ -33,7 +33,7 @@ Made with Flutter and Dart, uses [themoviedb.org](http://themoviedb.org) API for
 
 ## Add friends to new group:
 
-![Group invite](https://github.com/ifelsebreak/MatchFlix-fluter/blob/main/lib/images/MatchFlix_4.gif)
+![Group invite](https://github.com/ifelsebreak/MatchFlix-flutter/blob/main/lib/images/MatchFlix_4.gif)
 
 
 ## Changelog
