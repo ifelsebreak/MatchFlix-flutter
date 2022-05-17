@@ -8,6 +8,7 @@
 
 ## DEPRECATED
 ### This project is being rewritten from scratch with proper OOP, sound Null-safety and state management with BLOC pattern.
+I also made an [Angular remake](https://github.com/ifelsebreak/MatchFlix-Angular) of this app concept.
 
 ## Overview
 
